@@ -108,12 +108,16 @@ module Workling
   # attempts to load amqp and writes out descriptive error message if not present
   def self.try_load_an_amqp_client
     begin
-      require 'mq'
-    rescue Exception => e
-      raise WorklingError.new(
-        "WORKLING: couldn't find the ruby amqp client - you need it for the amqp runner. " \
-        "Install from github: gem sources -a http://gems.github.com/ && sudo gem install tmm1-amqp "
-      )
+      require 'amqp' # this is for more recent versions of the amqp client
+    rescue LoadError
+      begin
+        require 'mq'
+      rescue Exception => e
+        raise WorklingError.new(
+          "WORKLING: couldn't find the ruby amqp client - you need it for the amqp runner. " \
+          "Install from github: gem sources -a http://gems.github.com/ && sudo gem install tmm1-amqp "
+        )
+      end
     end
   end
   
